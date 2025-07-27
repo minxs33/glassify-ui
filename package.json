@@ -1,0 +1,29 @@
+{
+  "name": "glassify-ui",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "peerDependencies": {
+    "react": "^17 || ^18",
+    "react-dom": "^17 || ^18"
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^19.1.8",
+    "tsup": "^8.5.0"
+  }
+}

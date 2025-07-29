@@ -5,25 +5,31 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src",
+    "src/util/",
+    "src/component/"
   ],
   "exports": {
     ".": {
-      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     }
   },
   "peerDependencies": {
-    "react": "^17 || ^18",
-    "react-dom": "^17 || ^18"
+    "react": "^17 || ^18 || ^19",
+    "react-dom": "^17 || ^18 || ^19"
   },
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "dev": "tsup src/index.ts --watch --dts --onSuccess \"pnpm yalc-push\"",
+    "yalc-push": "npx yalc push --changed"
   },
   "license": "MIT",
   "devDependencies": {
     "@types/react": "^19.1.8",
-    "tsup": "^8.5.0"
+    "tsup": "^8.5.0",
+    "typescript": "~5.8.3"
   }
 }

@@ -1,10 +1,10 @@
 import { useState, useEffect, CSSProperties } from 'react'
-import { Color, RGBColors } from '../util/colorType'
+import { ColorType, ColorOption, getColorStyle, ColorPresets, CustomColor} from '../util/colorType'
 
 interface GlassifyProps {
   children?: React.ReactNode
   className?: string
-  color?: Color | string
+  color?: ColorOption
   darkColor?: string
   theme?: 'light' | 'dark'
 }
@@ -19,8 +19,11 @@ export const Glassify: React.FC<GlassifyProps> = ({ children, className, color:c
     setFreq(0.01 + Math.random() * (0.02 - 0.01))
   }, [])
   
-  // make sure seed and freq are set before rendering
+  // make sure seed and freq are set before rendering also check if this is client-side
   if (seed === null || freq === null) return null
+
+  // Determine the current theme
+  const currentTheme = theme || 'light';
 
   // Function to get styles based on color and seed
   const getStyles = (color: string, seed: number) => {
@@ -46,10 +49,10 @@ export const Glassify: React.FC<GlassifyProps> = ({ children, className, color:c
       } as CSSProperties,
   
       tint: {
-        zIndex: 1,
+        zIndex: 3,
         position: 'absolute',
         inset: 0,
-        background: 'hsla(255, 255, 255, 0.1)',
+        background: 'rgb(255, 255, 255, 0.05)',
       } as CSSProperties,
   
       shine: {
@@ -59,7 +62,7 @@ export const Glassify: React.FC<GlassifyProps> = ({ children, className, color:c
         overflow: 'hidden',
         transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2)',
         borderRadius: '0.75rem',
-        backdropFilter: 'blur(5px)', //ngefek ke visibility
+        backdropFilter: 'blur(10px)', //ngefek ke visibility
         boxShadow: `
           inset 4px 2px 3px 0 rgb(${color} / 0.1),
           inset 1px -2px 5px 1px rgb(${color} / 0.1)
@@ -84,15 +87,34 @@ export const Glassify: React.FC<GlassifyProps> = ({ children, className, color:c
     };
   };
 
+  const getColorValue = (colorOption: ColorOption, theme: 'light' | 'dark', darkColor?: string):string => {
+    if (currentTheme == 'dark' && darkColor) {
+      if (Object.keys(ColorPresets).includes(darkColor)) {
+        return getColorStyle(darkColor as ColorType, 'dark');
+      }
+      return darkColor;
+    }
+    
+    if(typeof colorOption === 'string'){
+      if(Object.keys(ColorPresets).includes(colorOption)) {
+        return getColorStyle(colorOption as ColorType, theme);
+      }
+
+      return colorOption;
+    }
+
+    if (typeof colorOption === 'object' && 'light' in colorOption && 'dark' in colorOption) {
+      return colorOption[currentTheme];
+    }
+
+    return getColorStyle('Default', currentTheme);
+  }
+
   // Initialize styles for the divs
-  const color = 
-    theme === 'dark' && darkColor // If theme is dark and darkColor is provided
-    ? darkColor 
-    : typeof colorProps === 'string' // If colorProps is a string
-    ? colorProps 
-    : RGBColors[colorProps as Color]?.[theme || 'light'] ?? '255 255 255'; // Default to white if undefined
+
+  const colorValue = getColorValue(colorProps ?? "Default", currentTheme, darkColor);
   
-  const styles = getStyles(color, seed)
+  const styles = getStyles(colorValue, seed)
 
   return (
     <>

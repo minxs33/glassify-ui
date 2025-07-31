@@ -1,13 +1,15 @@
 import { useState, useEffect, CSSProperties } from 'react'
-import { Color, HSLCodes } from '../util/colorType'
+import { Color, RGBColors } from '../util/colorType'
 
 interface GlassifyProps {
   children?: React.ReactNode
-  wrapperClass?: string
-  glowColor?: Color
+  className?: string
+  color?: Color | string
+  darkColor?: string
+  theme?: 'light' | 'dark'
 }
 
-export const Glassify: React.FC<GlassifyProps> = ({children, wrapperClass, glowColor}) => {
+export const Glassify: React.FC<GlassifyProps> = ({ children, className, color:colorProps, darkColor, theme }) => {
   const [seed, setSeed] = useState<number | null>(null)
   const [freq, setFreq] = useState<number | null>(null)
 
@@ -47,7 +49,7 @@ export const Glassify: React.FC<GlassifyProps> = ({children, wrapperClass, glowC
         zIndex: 1,
         position: 'absolute',
         inset: 0,
-        background: 'hsla(255, 255, 255, 0.01)',
+        background: 'hsla(255, 255, 255, 0.1)',
       } as CSSProperties,
   
       shine: {
@@ -56,12 +58,12 @@ export const Glassify: React.FC<GlassifyProps> = ({children, wrapperClass, glowC
         zIndex: 2,
         overflow: 'hidden',
         transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2)',
-        borderRadius: '16px',
-        backdropFilter: 'blur(2px)',
-        // boxShadow: `
-        //   inset 4px 2px 3px 0 rgb(${color} / 0.1),
-        //   inset 1px -2px 5px 1px rgb(${color} / 0.1)
-        // `,
+        borderRadius: '0.75rem',
+        backdropFilter: 'blur(5px)', //ngefek ke visibility
+        boxShadow: `
+          inset 4px 2px 3px 0 rgb(${color} / 0.1),
+          inset 1px -2px 5px 1px rgb(${color} / 0.1)
+        `,
       } as CSSProperties,
   
       bottomGlow: {
@@ -69,11 +71,11 @@ export const Glassify: React.FC<GlassifyProps> = ({children, wrapperClass, glowC
         inset: 0,
         zIndex: 3,
         borderRadius: '16px',
-        filter: 'blur(5px)',
-        boxShadow: `
-          inset 0 -20px 20px -20px rgb(${color} / 0.5),
-          inset 0 0px 0px 1px rgb(${color} / 0.2)
-        `,
+        filter: 'blur(10px)',
+        // boxShadow: `
+        //   inset 0 -20px 20px -20px rgb(${color} / 0.5),
+        //   inset 0px 0px 0px 1px rgb(${color} / 0.2)
+        // `,
       } as CSSProperties,
   
       content: {
@@ -83,7 +85,13 @@ export const Glassify: React.FC<GlassifyProps> = ({children, wrapperClass, glowC
   };
 
   // Initialize styles for the divs
-  const color = HSLCodes[glowColor as Color] ?? '255 255 255'
+  const color = 
+    theme === 'dark' && darkColor // If theme is dark and darkColor is provided
+    ? darkColor 
+    : typeof colorProps === 'string' // If colorProps is a string
+    ? colorProps 
+    : RGBColors[colorProps as Color]?.[theme || 'light'] ?? '255 255 255'; // Default to white if undefined
+  
   const styles = getStyles(color, seed)
 
   return (
@@ -156,7 +164,7 @@ export const Glassify: React.FC<GlassifyProps> = ({children, wrapperClass, glowC
         </filter>
       </svg>
 
-      <div style={styles.wrapper} className={`${wrapperClass || ''} rounded-xl p-8`}>
+      <div style={styles.wrapper} className={`${className || ''} rounded-xl p-8`}>
         <div style={styles.effect} />
         <div style={styles.tint} />
         <div  style={styles.shine} />

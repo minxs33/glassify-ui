@@ -5,3 +5,4 @@ export * from './effectPreset/blurType';
 export * from './effectPreset/turbulenceType';
 export * from './effectPreset/displacementType';
 export * from './borderRadiusType';
+export * from './zIndexer';

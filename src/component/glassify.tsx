@@ -1,5 +1,6 @@
 import { useState, useEffect, CSSProperties } from 'react'
 import {
+  parseZIndex,
   ColorType,
   ColorOption,
   getColorStyle,
@@ -20,6 +21,7 @@ interface GlassifyProps {
   children?: React.ReactNode
   className?: string
   contentClassName?: string
+  zIndex?: string
   color?: ColorOption
   darkColor?: string
   borderRadius?: BorderRadiusOption
@@ -37,6 +39,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
   children, 
   className, 
   contentClassName,
+  zIndex,
   color:colorProps, 
   darkColor, 
   tint:tintProps, 
@@ -51,7 +54,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
 }) => {
   const [seed, setSeed] = useState<number | null>(null)
 
-  // randomize seed and frequency on mount
+  // randomize seed on mount
   useEffect(() => {
     setSeed(Math.floor(Math.random() * 10000))
   }, [])
@@ -114,7 +117,12 @@ export const Glassify: React.FC<GlassifyProps> = ({
       ...(displacement !== undefined && { displacement })
     }
   );
-    
+  
+  const zIndexValue = parseZIndex(zIndex) ??
+  (() => {
+    const match = className?.split(/\s+/).find((cls) => cls.startsWith("z-"));
+    return parseZIndex(match);
+  })() ?? 0;
   const colorValue = getColorValue(colorProps ?? "Default", currentTheme, darkColor);
   const borderRadiusValue = getBorderRadiusValue(borderRadius ?? 'none');
   const tintValue = effectPresetStyles.tint ?? 'rgba(255, 255, 255, 0.1)';
@@ -131,11 +139,12 @@ export const Glassify: React.FC<GlassifyProps> = ({
         overflow: 'hidden',
         boxShadow: '0 0 5px rgba(0, 0, 0, 0.05), 0 0 20px rgba(0, 0, 0, 0.05)',
         borderRadius: borderRadius,
+        zIndex: zIndexValue,
       } as CSSProperties,
   
       effect: {
         position: 'absolute',
-        zIndex: 0,
+        zIndex: zIndexValue,
         inset: 0,
         backdropFilter: `blur(${blur})`,
         filter: `url(#vibrancyFilter-${seed})`,
@@ -146,7 +155,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
       } as CSSProperties,
   
       tint: {
-        zIndex: 3,
+        zIndex: zIndexValue+3,
         position: 'absolute',
         inset: 0,
         background: `rgba(${tint})`,
@@ -155,7 +164,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
       shine: {
         position: 'absolute',
         inset: 0,
-        zIndex: 2,
+        zIndex: zIndexValue+2,
         overflow: 'hidden',
         transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2)',
         borderRadius: borderRadius,
@@ -168,7 +177,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
       bottomGlow: {
         position: 'absolute',
         inset: 0,
-        zIndex: 3,
+        zIndex: zIndexValue+3,
         borderRadius: typeof borderRadius === 'number' ? borderRadius / 2 : borderRadius,
         filter: 'blur(10px)',
         boxShadow: `
@@ -178,7 +187,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
       } as CSSProperties,
   
       content: {
-        zIndex: 3,
+        zIndex: zIndexValue+3,
       } as CSSProperties,
     };
   };

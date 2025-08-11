@@ -26,4 +26,4 @@ export const getDisplacementStyle = (
 }
 
 // Combined type for all displacement options
-export type DisplacementOption = DisplacementType | string;
+export type DisplacementOption = DisplacementType | (string & {});

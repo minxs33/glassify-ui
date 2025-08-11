@@ -32,17 +32,17 @@ export const EffectPresets: Record<EffectPresetType, EffectPresetConfig> = {
         turbulence: 'md',
         displacement: 'base'
     },
-    crystal: {
+    misted: {
         blur: 'lg',
         tint: 'crystal',
         turbulence: 'base',
         displacement: 'base'
     },
-    misted: {
-        blur: 'xl',
+    crystal: {
+        blur: 'md',
         tint: 'slate',
-        turbulence: 'md',
-        displacement: 'md'
+        turbulence: 'base',
+        displacement: 'lg'
     },
     smoked: {
         blur: 'xl',

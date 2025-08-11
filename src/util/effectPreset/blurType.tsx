@@ -26,4 +26,4 @@ export const getBlurStyle = (blur: BlurType | string): string => {
 }
 
 // Combined type for all blur options
-export type BlurOption = BlurType | string;
+export type BlurOption = BlurType | (string & {});

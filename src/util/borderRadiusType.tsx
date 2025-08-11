@@ -34,4 +34,4 @@ export const getBorderRadiusStyle = (
 }
 
 // Combined type for all border radius options
-export type BorderRadiusOption = BorderRadiusType | string
+export type BorderRadiusOption = (string & {}) | BorderRadiusType

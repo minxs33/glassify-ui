@@ -4,34 +4,22 @@ import {
   ColorOption,
   getColorStyle,
   ColorPresets,
-  TintType,
   TintOption,
-  getTintStyle,
-  TintPresets,
   BorderRadiusType,
   BorderRadiusOption,
   getBorderRadiusStyle,
   BorderRadiusPresets,
   BlurOption,
-  BlurType,
-  getBlurStyle,
-  BlurPresets,
   EffectPresetOption,
   TurbulenceOption,
   DisplacementOption,
   getEffectPresetStyle,
-  TurbulencePresets,
-  TurbulenceType,
-  getTurbulenceStyle,
-  TurbulenceConfig,
-  getDisplacementStyle,
-  DisplacementType,
-  DisplacementPresets
 } from '../util';
 
 interface GlassifyProps {
   children?: React.ReactNode
   className?: string
+  contentClassName?: string
   color?: ColorOption
   darkColor?: string
   borderRadius?: BorderRadiusOption
@@ -48,6 +36,7 @@ interface GlassifyProps {
 export const Glassify: React.FC<GlassifyProps> = ({ 
   children, 
   className, 
+  contentClassName,
   color:colorProps, 
   darkColor, 
   tint:tintProps, 
@@ -194,7 +183,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
     };
   };
   
-  // Get them styles
+  // Get them styles for the divs
   const styles = getStyles(colorValue, tintValue, borderRadiusValue, blurValue, seed)
 
   return (
@@ -284,7 +273,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
         <div style={styles.tint} />
         <div  style={styles.shine} />
         <div style={styles.bottomGlow} />
-        <div style={styles.content}>{children}</div>
+        <div style={styles.content} className={`${contentClassName || ''}`}>{children}</div>
       </div>
     </>
   )

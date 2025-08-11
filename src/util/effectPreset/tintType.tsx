@@ -190,7 +190,7 @@ export const TintPresets: Record<TintType, TintConfig> = {
 
 // Helper function to get tint style
 export const getTintStyle = (
-  tint: TintType | string | CustomTint, 
+  tint: TintType | string, 
   theme: 'light' | 'dark' = 'light'
 ): string => {
   // If it's a custom string, return it directly
@@ -203,11 +203,5 @@ export const getTintStyle = (
   return preset ? preset[theme] : TintPresets.none[theme];
 };
 
-// Utility type for custom tint
-export type CustomTint = {
-  light: string;
-  dark: string;
-};
-
 // Combined type for all tint options
-export type TintOption = TintType | string | CustomTint;
+export type TintOption = TintType | (string & {});

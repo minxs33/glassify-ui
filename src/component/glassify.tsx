@@ -137,7 +137,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
         position: 'relative',
         display: 'flex',
         overflow: 'hidden',
-        boxShadow: '0 0 5px rgba(0, 0, 0, 0.05), 0 0 20px rgba(0, 0, 0, 0.05)',
+        // boxShadow: '0 0 5px rgba(0, 0, 0, 0.05), 0 0 20px rgba(0, 0, 0, 0.05)',
         borderRadius: borderRadius,
         zIndex: zIndexValue,
       } as CSSProperties,
@@ -164,16 +164,19 @@ export const Glassify: React.FC<GlassifyProps> = ({
       shine: {
         position: 'absolute',
         inset: 0,
-        zIndex: zIndexValue+2,
+        zIndex: zIndexValue + 2,
         overflow: 'hidden',
         transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2)',
         borderRadius: borderRadius,
         boxShadow: `
-          inset 4px 2px 3px 0 rgb(${color} / 0.1),
-          inset 1px -2px 5px 1px rgb(${color} / 0.1)
+          inset 0 0 0 2px rgba(${(() => {
+            const [r, g, b] = colorValue.split(",").map(v => parseInt(v.trim(), 10));
+            return `${Math.max(0, r - 40)}, ${Math.max(0, g - 40)}, ${Math.max(0, b - 40)}, 1`;
+          })()}), /* dark border */
+          inset 0px 2px 1px 2px rgba(${colorValue}, 0.5), /* light source */
+          inset 0px -2px 1px 1px rgba(${colorValue}, 0.5) /* light source */
         `,
       } as CSSProperties,
-  
       bottomGlow: {
         position: 'absolute',
         inset: 0,
@@ -208,18 +211,16 @@ export const Glassify: React.FC<GlassifyProps> = ({
           id={`vibrancyFilter-${seed}`}
           x="0%" y="0%" width="100%" height="100%" filterUnits="objectBoundingBox"
         >
+          {/* Turbulence pattern for displacement */}
           <feTurbulence
-            // type="fractalNoise"
             type="turbulence"
-            // baseFrequency={`${freq} ${freq}`}
-            baseFrequency={`${turbulenceValue.baseFreq} ${turbulenceValue.baseFreq+0.01}`}
+            baseFrequency={`${turbulenceValue.baseFreq} ${turbulenceValue.baseFreq + 0.01}`}
             numOctaves={turbulenceValue.numOctaves}
             seed={seed}
             result="turbulence"
           />
-          
-          <feFlood floodColor="white" result="whiteFlood" />
-          
+
+          {/* Radial highlight on edges */}
           <feImage
             xlinkHref={`data:image/svg+xml;utf8,${encodeURIComponent(`
               <svg xmlns='http://www.w3.org/2000/svg' width='200%' height='200%'>
@@ -231,16 +232,13 @@ export const Glassify: React.FC<GlassifyProps> = ({
             width="100%" height="100%"
           />
 
+          {/* Blend turbulence with edge gradient */}
           <feBlend in="turbulence" in2="edgeHighlight" mode="lighten" result="highlightedEdges" />
 
-          <feComponentTransfer in="turbulence" result="mapped">
-            <feFuncR type="gamma" amplitude="1" exponent="10" offset="0.5" />
-            <feFuncG type="gamma" amplitude="0" exponent="1" offset="0" />
-            <feFuncB type="gamma" amplitude="0" exponent="1" offset="0.5" />
-          </feComponentTransfer>
-
+          {/* Blur turbulence for lighting */}
           <feGaussianBlur in="turbulence" stdDeviation="4" result="softMap" />
 
+          {/* Add specular lighting */}
           <feSpecularLighting
             in="softMap"
             surfaceScale="5"
@@ -252,11 +250,11 @@ export const Glassify: React.FC<GlassifyProps> = ({
             <fePointLight x="100" y="100" z="200" />
           </feSpecularLighting>
 
+          {/* Combine highlights and lighting */}
           <feBlend in="highlightedEdges" in2="specLight" mode="screen" result="litImage" />
 
-          <feFlood floodColor="#00aaff" floodOpacity="0.4" result="glowColor" />
+          {/* Offset + combine to create bent map */}
           <feOffset in="softMap" dx="5" dy="5" result="offsetMap" />
-
           <feComposite
             in="softMap"
             in2="offsetMap"
@@ -266,6 +264,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
             result="bentMap"
           />
 
+          {/* Final displacement */}
           <feDisplacementMap
             in="SourceGraphic"
             in2="bentMap"
@@ -276,12 +275,11 @@ export const Glassify: React.FC<GlassifyProps> = ({
         </filter>
       </svg>
 
-
       <div style={styles.wrapper} className={`${className || ''}`}>
         <div style={styles.effect} />
         <div style={styles.tint} />
         <div  style={styles.shine} />
-        <div style={styles.bottomGlow} />
+        {/* <div style={styles.bottomGlow} /> */}
         <div style={styles.content} className={`${contentClassName || ''}`}>{children}</div>
       </div>
     </>

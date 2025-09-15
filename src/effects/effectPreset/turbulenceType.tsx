@@ -90,5 +90,6 @@ export const getTurbulenceStyle = (
 };
 
 // Combined type for all turbulence options
-export type TurbulenceOption = TurbulenceType | Partial<TurbulenceConfig> | (string & {});
+// export type TurbulenceOption = TurbulenceType | Partial<TurbulenceConfig> | (string & {});
+export type TurbulenceOption = TurbulenceType | (string & {});
   

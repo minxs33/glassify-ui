@@ -1,4 +1,4 @@
-export function parseZIndex(value?: string): number | undefined {
+export const parseZIndex = (value?: string): number | undefined => {
     if (!value) return undefined;
   
     // Tailwind pattern: z-10, z-50, z-[999], etc.

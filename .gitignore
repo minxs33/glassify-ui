@@ -16,3 +16,4 @@ dist/
 # Yalc local registry files
 .yalc/
 yalc.lock
+repomix-output.xml

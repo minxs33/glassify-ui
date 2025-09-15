@@ -59,7 +59,7 @@ export const ColorPresets: Record<ColorType, { light: string; dark: string }> = 
 };
 
 export const getColorStyle = (
-  color: ColorType | string,
+  color: ColorOption,
   theme: 'light' | 'dark' = 'light'
 ): string => {
   if(typeof color === 'string' && !Object.keys(ColorPresets).includes(color)){ //if the color is a string and not a ColorType
@@ -71,9 +71,4 @@ export const getColorStyle = (
   return preset ? preset[theme] : ColorPresets.none[theme] // if the color is not found in ColorPresets, return none color with the specified theme
 }
 
-export type CustomColor = {
-  light: string;
-  dark: string;
-}
-
-export type ColorOption = ColorType | CustomColor | (string & {});
+export type ColorOption = ColorType | (string & {});

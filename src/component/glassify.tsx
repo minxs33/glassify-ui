@@ -1,11 +1,16 @@
 import { useState, useEffect, CSSProperties } from 'react'
-import {
+import { 
   parseZIndex,
+  rgbComma,
+  resolveThemedValue
+} from '../util';
+import {
   ColorType,
   ColorOption,
   getColorStyle,
   ColorPresets,
   TintOption,
+  TintPresets,
   BorderRadiusType,
   BorderRadiusOption,
   getBorderRadiusStyle,
@@ -13,9 +18,12 @@ import {
   BlurOption,
   EffectPresetOption,
   TurbulenceOption,
+  TurbulencePresets,
   DisplacementOption,
   getEffectPresetStyle,
-} from '../util';
+  GlowOption,
+  EffectStyles,
+} from '../effects';
 
 interface GlassifyProps {
   children?: React.ReactNode
@@ -23,15 +31,13 @@ interface GlassifyProps {
   contentClassName?: string
   zIndex?: string
   color?: ColorOption
-  darkColor?: string
   borderRadius?: BorderRadiusOption
   tint?: TintOption
-  darkTint?: string
   blur?: BlurOption
   turbulence?: TurbulenceOption
-  turbulenceDark?: TurbulenceOption
   displacement?: DisplacementOption
   effectPreset?: EffectPresetOption
+  glow?: GlowOption;
   theme?: 'light' | 'dark'
 }
 
@@ -40,17 +46,15 @@ export const Glassify: React.FC<GlassifyProps> = ({
   className, 
   contentClassName,
   zIndex,
-  color:colorProps, 
-  darkColor, 
+  color:colorProps,
   tint:tintProps, 
-  darkTint, 
   borderRadius,
   blur,
   turbulence,
-  turbulenceDark,
   displacement,
-  effectPreset, 
-  theme, 
+  effectPreset,
+  glow,
+  theme,
 }) => {
   const [seed, setSeed] = useState<number | null>(null)
 
@@ -65,29 +69,19 @@ export const Glassify: React.FC<GlassifyProps> = ({
   // Determine the current theme
   const currentTheme = theme || 'light';
 
-  // getting them defined object values
-  
-  const getColorValue = (colorOption: ColorOption, theme: 'light' | 'dark', darkColor?: string):string => {
-    if (currentTheme == 'dark' && darkColor) {
-      if (Object.keys(ColorPresets).includes(darkColor)) {
-        return getColorStyle(darkColor as ColorType, 'dark');
-      }
-      return darkColor;
-    }
-    
-    if(typeof colorOption === 'string'){
-      if(Object.keys(ColorPresets).includes(colorOption)) {
-        return getColorStyle(colorOption as ColorType, theme);
-      }
+  // Defining functions to get all the values of the props
+  const getColorValue = (
+    colorOption: ColorOption,
+    theme: 'light' | 'dark',
+  ):string => {
+    const resolved = resolveThemedValue(colorOption, theme); // Resolve the themed value (e.g., "red dark:blue" -> "red" or "blue")
 
-      return colorOption;
-    }
-
-    if (typeof colorOption === 'object' && 'light' in colorOption && 'dark' in colorOption) {
-      return colorOption[currentTheme];
-    }
-
-    return getColorStyle('Default', currentTheme);
+    if (!resolved) return getColorStyle('Default', theme); // Fallback to 'Default' if no color is provided
+    // if (typeof resolved === 'string' && !Object.keys(ColorPresets).includes(resolved)) {
+    //   return rgbComma(resolved);
+    // } future plan
+    // console.log("Color value:", getColorStyle(resolved as ColorType, theme));
+    return getColorStyle(resolved as ColorType, theme);
   }
 
   const getBorderRadiusValue = (borderRadius: BorderRadiusOption): string => {
@@ -103,32 +97,73 @@ export const Glassify: React.FC<GlassifyProps> = ({
   }
 
   // Function that returns the value of types inside the EffectPresets
-  const effectPresetStyles = getEffectPresetStyle(
-    effectPreset ?? 'none',
-    currentTheme,
-    {
-      ...(blur !== undefined && { blur }),
-      ...((currentTheme === 'dark' ? darkTint ?? tintProps : tintProps) !== undefined && { 
-        tint: currentTheme === 'dark' ? darkTint ?? tintProps : tintProps 
-      }),
-      ...((currentTheme === 'dark' ? turbulenceDark ?? turbulence : turbulence) !== undefined && { 
-        turbulence: currentTheme === 'dark' ? turbulenceDark ?? turbulence : turbulence 
-      }),
-      ...(displacement !== undefined && { displacement })
+  const getEffectPresetValue = (
+    // Same logic as getColorValue but needs to return an undefined if no value is provided so the getEffectPresetStyle can handle overrides
+    blur : BlurOption | undefined,
+    tintProps: TintOption | undefined,
+    turbulence: TurbulenceOption | undefined,
+    displacement: DisplacementOption | undefined,
+  ): EffectStyles =>{
+
+      const resolvedTint = tintProps ? resolveThemedValue(tintProps, currentTheme) : undefined;
+      const resolvedTurbulence = turbulence ? resolveThemedValue(turbulence, currentTheme) : undefined;
+      
+      return getEffectPresetStyle(
+      effectPreset ?? 'none',
+      currentTheme,
+      {
+        ...(blur !== undefined && { blur }),
+        ...(tintProps !== undefined && { tint : resolvedTint }),
+        ...(turbulence !== undefined && { turbulence: resolvedTurbulence }),
+        ...(displacement !== undefined && { displacement })
+      }
+    );
+  }
+
+  const getZIndex = (zIndex: string | undefined, className?: string): number => {
+    if (zIndex) {
+      const parsedZIndex = parseZIndex(zIndex);
+      if (parsedZIndex !== null) return parsedZIndex ?? 0;
     }
-  );
-  
-  const zIndexValue = parseZIndex(zIndex) ??
-  (() => {
-    const match = className?.split(/\s+/).find((cls) => cls.startsWith("z-"));
-    return parseZIndex(match);
-  })() ?? 0;
-  const colorValue = getColorValue(colorProps ?? "Default", currentTheme, darkColor);
+    if (className) {
+      const match = className.split(/\s+/).find((cls) => cls.startsWith("z-"));
+      if (match) {
+        const parsedClassZIndex = parseZIndex(match);
+        if (parsedClassZIndex !== null) return parsedClassZIndex ?? 0;
+      }
+    }
+    return 0;
+  };
+
+  // const getGlowValue = (glow: GlowOption): string => {
+  //   if (typeof glow === 'string') {
+  //     if (Object.keys(GlowPresets).includes(glow)) {
+  //       return GlowPresets[glow as keyof typeof GlowPresets];
+  //     }
+  //     return glow; // Return the string directly if it's not a preset
+  //   }
+
+  //   // If it's an object, we assume it has 'gradient' property
+  //   if (typeof glow === 'object' && 'gradient' in glow) {
+  //     return glow.gradient;
+  //   }
+
+  //   // Default to no glow
+  //   return 'none';
+  // }
+
+  // value initialization
+  const zIndexValue = getZIndex(zIndex, className);
+  const colorValue = getColorValue(colorProps ?? "Default", currentTheme);
   const borderRadiusValue = getBorderRadiusValue(borderRadius ?? 'none');
+  
+  const effectPresetStyles = getEffectPresetValue(blur, tintProps, turbulence, displacement);
+
   const tintValue = effectPresetStyles.tint ?? 'rgba(255, 255, 255, 0.1)';
   const blurValue = effectPresetStyles.blur ?? '8px';
   const turbulenceValue = effectPresetStyles.turbulence ?? { numOctaves: 1, baseFreq: 0.1 };
   const displacementValue = effectPresetStyles.displacement ?? '0';
+  // const glowValue = getGlowValue(glow ?? 'none');
   
   // Function to get styles with specific values
   const getStyles = (color: string, tint: string, borderRadius: string, blur: string, seed: number) => {
@@ -168,16 +203,16 @@ export const Glassify: React.FC<GlassifyProps> = ({
         overflow: 'hidden',
         transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2)',
         borderRadius: borderRadius,
-        boxShadow: `
-          inset 0 0 0 2px rgba(${(() => {
-            const [r, g, b] = colorValue.split(",").map(v => parseInt(v.trim(), 10));
-            return `${Math.max(0, r - 40)}, ${Math.max(0, g - 40)}, ${Math.max(0, b - 40)}, 1`;
-          })()}), /* dark border */
-          inset 0px 2px 1px 2px rgba(${colorValue}, 0.5), /* light source */
-          inset 0px -2px 1px 1px rgba(${colorValue}, 0.5) /* light source */
-        `,
+        // boxShadow: `
+        //   inset 0 0 0 2px rgba(${(() => {
+        //     const [r, g, b] = colorValue.split(",").map(v => parseInt(v.trim(), 10));
+        //     return `${Math.max(0, r - 40)}, ${Math.max(0, g - 40)}, ${Math.max(0, b - 40)}, 1`;
+        //   })()}), /* dark border */
+        //   inset 0px 2px 1px 2px rgba(${colorValue}, 0.5), /* light source */
+        //   inset 0px -2px 1px 1px rgba(${colorValue}, 0.5) /* light source */
+        // `,
       } as CSSProperties,
-      bottomGlow: {
+      glow: {
         position: 'absolute',
         inset: 0,
         zIndex: zIndexValue+3,
@@ -187,6 +222,10 @@ export const Glassify: React.FC<GlassifyProps> = ({
           inset 0 -20px 20px -20px rgb(${color} / 0.5),
           inset 0px 0px 0px 1px rgb(${color} / 0.2)
         `,
+        // background: glowValue,
+        // backgroundRepeat: 'no-repeat',
+        // backgroundSize: 'cover',
+        // pointerEvents: 'none'
       } as CSSProperties,
   
       content: {
@@ -279,7 +318,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
         <div style={styles.effect} />
         <div style={styles.tint} />
         <div  style={styles.shine} />
-        {/* <div style={styles.bottomGlow} /> */}
+        <div style={styles.glow} />
         <div style={styles.content} className={`${contentClassName || ''}`}>{children}</div>
       </div>
     </>

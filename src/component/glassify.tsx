@@ -196,7 +196,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
         background: `rgba(${tint})`,
       } as CSSProperties,
   
-      shine: {
+      bevel: {
         position: 'absolute',
         inset: 0,
         zIndex: zIndexValue + 2,
@@ -218,10 +218,10 @@ export const Glassify: React.FC<GlassifyProps> = ({
         zIndex: zIndexValue+3,
         borderRadius: typeof borderRadius === 'number' ? borderRadius / 2 : borderRadius,
         filter: 'blur(10px)',
-        boxShadow: `
-          inset 0 -20px 20px -20px rgb(${color} / 0.5),
-          inset 0px 0px 0px 1px rgb(${color} / 0.2)
-        `,
+        // boxShadow: `
+        //   inset 0 -20px 20px -20px rgb(${color} / 1),
+        //   inset 0px 0px 0px 1px rgb(${color} / 1)
+        // `,
         // background: glowValue,
         // backgroundRepeat: 'no-repeat',
         // backgroundSize: 'cover',
@@ -317,7 +317,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
       <div style={styles.wrapper} className={`${className || ''}`}>
         <div style={styles.effect} />
         <div style={styles.tint} />
-        <div  style={styles.shine} />
+        <div  style={styles.bevel} />
         <div style={styles.glow} />
         <div style={styles.content} className={`${contentClassName || ''}`}>{children}</div>
       </div>

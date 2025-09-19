@@ -1,61 +1,117 @@
 export type ColorType = 
-  | 'none' 
-  | 'blue' 
-  | 'red' 
+  | 'red'
+  | 'orange'
+  | 'amber' 
+  | 'yellow'
+  | 'lime' 
   | 'green' 
-  | 'purple' 
-  | 'pink' 
-  | 'yellow' 
-  | 'indigo' 
-  | 'teal' 
-  | 'orange' 
   | 'emerald'
+  | 'teal' 
+  | 'cyan'
+  | 'sky'
+  | 'blue'
+  | 'indigo' 
+  | 'violet'
+  | 'purple'
+  | 'fuchsia' 
+  | 'pink'
+  | 'rose'
+  | 'slate'
+  | 'gray'
+  | 'zinc'
+  | 'neutral'
+  | 'stone';
 
 export const ColorPresets: Record<ColorType, { light: string; dark: string }> = {
-    'none': {
-      light: '255 255 255',
-      dark: '255 255 255',
-    },
-    'blue': {
-      light: '59 130 246',
-      dark: '37 99 235',
-    },
-    'red': {
-      light: '239 68 68',
-      dark: '153 27 27',
-    },
-    'green': {
-      light: '34 197 94',
-      dark: '21 128 61',
-    },
-    'purple': {
-      light: '168 85 247',
-      dark: '126 34 206',
-    },
-    'pink': {
-      light: '236 72 153',
-      dark: '157 23 77',
-    },
-    'yellow': {
-      light: '234 179 8',
-      dark: '161 98 7',
-    },
-    'indigo': {
-      light: '79 70 229',
-      dark: '67 56 202',
-    },
-    'teal': {
-      light: '13 148 136',
-      dark: '19 78 74',
-    },
-    'orange': {
-      light: '249 115 22',
-      dark: '154 52 18',
-    },
-    'emerald': {
-      light: '16 185 129',
-      dark: '6 95 70',
-    },
+  'red': {
+    light: '177 3 12',
+    dark: '127 6 14',
+  },
+  'orange': {
+    light: '204 84 0',
+    dark: '127 36 0)',
+  },
+  'amber': {
+    light: '203 123 0',
+    dark: '150 62 0',
+  },
+  'yellow': {
+    light: '192 142 0',
+    dark: '133 76 0',
+  },
+  'lime': {
+    light: '99 166 0',
+    dark: '48 79 0',
+  },
+  'green': {
+    light: '0 161 65',
+    dark: '0 77 55',
+  },
+  'emerald': {
+    light: '0 150 100',
+    dark: '0 77 55',
+  },
+  'teal': {
+    light: '0 150 134',
+    dark: '0 76 72',
+  },
+  'cyan': {
+    light: '0 147 174',
+    dark: '0 76 96',
+  },
+  'sky': {
+    light: '0 133 195',
+    dark: '0 71 110',
+  },
+  'blue': {
+    light: '0 71 178',
+    dark: '20 48 147',
+  },
+  'indigo': {
+    light: '26 8 168',
+    dark: '44 34 138',
+  },
+  'violet': {
+    light: '54 0 155',
+    dark: '74 11 154',
+  },
+  'purple': {
+    light: '90 0 162',
+    dark: '88 14 141',
+  },
+  'fuchsia': {
+    light: '156 3 178',
+    dark: '110 1 118',
+  },
+  'pink': {
+    light: '171 8 84',
+    dark: '130 0 61',
+  },
+  'rose': {
+    light: '180 0 45',
+    dark: '132 0 43',
+  },
+  'slate': {
+    light: '78 93 114',
+    dark: '23 33 49',
+  },
+  'gray': {
+    light: '89 96 100',
+    dark: '24 33 46',
+  },
+  'zinc': {
+    light: '89 96 100',
+    dark: '30 33 34',
+  },
+  'neutral': {
+    light: '87 94 97',
+    dark: '29 31 32',
+  },
+  'stone': {
+    light: '86 93 97',
+    dark: '29 31 33',
+  },
+  
 };
 
 export const getColorStyle = (
@@ -68,7 +124,9 @@ export const getColorStyle = (
 
   const preset = ColorPresets[color as ColorType];
 
-  return preset ? preset[theme] : ColorPresets.none[theme] // if the color is not found in ColorPresets, return none color with the specified theme
+  // return preset ? preset[theme] : ColorPresets.none[theme]
+  // if the color is not found in ColorPresets, return none color with the specified theme
+  return preset ? preset[theme] : '';
 }
 
 export type ColorOption = ColorType | (string & {});

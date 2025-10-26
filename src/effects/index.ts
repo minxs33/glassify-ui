@@ -8,3 +8,4 @@ export * from './borderRadiusType';
 export * from '../util/zIndexer';
 export * from '../util/colorUtil';
 export * from './glowType';
+export * from './shineType';

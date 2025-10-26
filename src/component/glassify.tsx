@@ -16,6 +16,9 @@ import {
   getBorderRadiusStyle,
   BorderRadiusPresets,
   BlurOption,
+  ShineOption,
+  getShineStyle,
+  ShinePresets,
   EffectPresetOption,
   TurbulenceOption,
   TurbulencePresets,
@@ -34,6 +37,7 @@ interface GlassifyProps {
   borderRadius?: BorderRadiusOption
   tint?: TintOption
   blur?: BlurOption
+  shine?: ShineOption;
   turbulence?: TurbulenceOption
   displacement?: DisplacementOption
   effectPreset?: EffectPresetOption
@@ -50,6 +54,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
   tint:tintProps, 
   borderRadius,
   blur,
+  shine,
   turbulence,
   displacement,
   effectPreset,
@@ -79,8 +84,8 @@ export const Glassify: React.FC<GlassifyProps> = ({
     if (!resolved) return getColorStyle('Default', theme); // Fallback to 'Default' if no color is provided
     // if (typeof resolved === 'string' && !Object.keys(ColorPresets).includes(resolved)) {
     //   return rgbComma(resolved);
-    // } future plan
-    // console.log("Color value:", getColorStyle(resolved as ColorType, theme));
+    // }
+    // Future proofing for custom colors
     return getColorStyle(resolved as ColorType, theme);
   }
 
@@ -95,6 +100,14 @@ export const Glassify: React.FC<GlassifyProps> = ({
 
     return getBorderRadiusStyle('none'); // Default to 'none' if no valid border radius is provided
   }
+
+  const getShineValue = (shine: ShineOption, currentTheme: 'light' | 'dark'): string => {
+    // console.log(shine);
+    // Im making some changes here, instead of having to type assert the value, im making getShineStyle to accept plain strings because
+    // it already handles parsing and sanitize invalid input logic internally where Color, Tint, and Turbulence get methods do not.
+    const resolvedShine = resolveThemedValue(shine, currentTheme) ?? '';
+    return getShineStyle(resolvedShine, currentTheme);
+  };
 
   // Function that returns the value of types inside the EffectPresets
   const getEffectPresetValue = (
@@ -156,6 +169,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
   const zIndexValue = getZIndex(zIndex, className);
   const colorValue = getColorValue(colorProps ?? "Default", currentTheme);
   const borderRadiusValue = getBorderRadiusValue(borderRadius ?? 'none');
+  const shineValue = getShineValue(shine ?? 'bottom-right-sm-neutral', currentTheme);
   
   const effectPresetStyles = getEffectPresetValue(blur, tintProps, turbulence, displacement);
 
@@ -163,10 +177,14 @@ export const Glassify: React.FC<GlassifyProps> = ({
   const blurValue = effectPresetStyles.blur ?? '8px';
   const turbulenceValue = effectPresetStyles.turbulence ?? { numOctaves: 1, baseFreq: 0.1 };
   const displacementValue = effectPresetStyles.displacement ?? '0';
+
+  console.log("Glassify.tsx shineProp: "+shine);
+  console.log("Glassify.tsx shine: "+shineValue);
   // const glowValue = getGlowValue(glow ?? 'none');
   
   // Function to get styles with specific values
-  const getStyles = (color: string, tint: string, borderRadius: string, blur: string, seed: number) => {
+  const getStyles = (color: string, tint: string, borderRadius: string, blur: string, shine: string, seed: number) => {
+    // console.log({color, tint, borderRadius, blur, shine});
     return {
       wrapper: {
         position: 'relative',
@@ -196,28 +214,21 @@ export const Glassify: React.FC<GlassifyProps> = ({
         background: `rgba(${tint})`,
       } as CSSProperties,
   
-      bevel: {
+      shine: {
         position: 'absolute',
         inset: 0,
         zIndex: zIndexValue + 2,
-        overflow: 'hidden',
         transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2)',
         borderRadius: borderRadius,
-        // boxShadow: `
-        //   inset 0 0 0 2px rgba(${(() => {
-        //     const [r, g, b] = colorValue.split(",").map(v => parseInt(v.trim(), 10));
-        //     return `${Math.max(0, r - 40)}, ${Math.max(0, g - 40)}, ${Math.max(0, b - 40)}, 1`;
-        //   })()}), /* dark border */
-        //   inset 0px 2px 1px 2px rgba(${colorValue}, 0.5), /* light source */
-        //   inset 0px -2px 1px 1px rgba(${colorValue}, 0.5) /* light source */
-        // `,
+        boxShadow: shine,
       } as CSSProperties,
+
       glow: {
-        position: 'absolute',
-        inset: 0,
-        zIndex: zIndexValue+3,
-        borderRadius: typeof borderRadius === 'number' ? borderRadius / 2 : borderRadius,
-        filter: 'blur(10px)',
+        // position: 'absolute',
+        // inset: 0,
+        // zIndex: zIndexValue+3,
+        // borderRadius: typeof borderRadius === 'number' ? borderRadius / 2 : borderRadius,
+        // filter: 'blur(10px)',
         // boxShadow: `
         //   inset 0 -20px 20px -20px rgb(${color} / 1),
         //   inset 0px 0px 0px 1px rgb(${color} / 1)
@@ -235,8 +246,8 @@ export const Glassify: React.FC<GlassifyProps> = ({
   };
   
   // Get them styles for the divs
-  const styles = getStyles(colorValue, tintValue, borderRadiusValue, blurValue, seed)
-
+  const styles = getStyles(colorValue, tintValue, borderRadiusValue, blurValue, shineValue, seed)
+  
   return (
     <>
       <svg style={{ display: 'none' }}>
@@ -262,7 +273,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
           {/* Radial highlight on edges */}
           <feImage
             xlinkHref={`data:image/svg+xml;utf8,${encodeURIComponent(`
-              <svg xmlns='http://www.w3.org/2000/svg' width='200%' height='200%'>
+              <svg xmlns='http://www.w3.org/2000/svg' width='10%' height='200%'>
                 <rect width='100%' height='100%' fill='url(%23grad-${seed})' />
               </svg>
             `)}`}
@@ -317,7 +328,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
       <div style={styles.wrapper} className={`${className || ''}`}>
         <div style={styles.effect} />
         <div style={styles.tint} />
-        <div  style={styles.bevel} />
+        <div className="shine" style={styles.shine} />
         <div style={styles.glow} />
         <div style={styles.content} className={`${contentClassName || ''}`}>{children}</div>
       </div>

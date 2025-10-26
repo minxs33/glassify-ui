@@ -21,7 +21,7 @@ const colorTints: Record<ColorType, { light: string; dark: string }> =
   Object.fromEntries(
     Object.entries(ColorPresets).map(([key, value]) => [
       key,
-      { light: `${value.light} / 0.2`, dark: `${value.dark} / 0.15` }
+      { light: `${value.light} , 0.2`, dark: `${value.dark} , 0.15` }
     ])
   ) as Record<ColorType, { light: string; dark: string }>;
 
@@ -32,7 +32,7 @@ export const TintPresets: Record<TintType, TintConfig> = {
     dark: '0, 0, 0, 0'
   },
   
-  // Imported from colorType.tsx wiith alpha adjusted using colorTints helper
+  // Imported from colorType.tsx with alpha adjusted using colorTints helper
   ...colorTints,
   
   // Special effects

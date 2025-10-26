@@ -70,7 +70,7 @@ export const EffectPresets: Record<EffectPresetType, EffectPresetConfig> = {
     },
     subtle: {
         blur: 'sm',
-        tint: 'white',
+        tint: 'neutral',
         turbulence: 'none',
         displacement: 'none'
     },

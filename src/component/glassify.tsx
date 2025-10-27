@@ -328,7 +328,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
       <div style={styles.wrapper} className={`${className || ''}`}>
         <div style={styles.effect} />
         <div style={styles.tint} />
-        <div className="shine" style={styles.shine} />
+        <div style={styles.shine} />
         <div style={styles.glow} />
         <div style={styles.content} className={`${contentClassName || ''}`}>{children}</div>
       </div>

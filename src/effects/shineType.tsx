@@ -32,14 +32,6 @@ import { ColorOption, ColorPresets, getColorStyle } from "./colorType";
  *  
  **/
 
-export const ShineSizes = [
-  'sm',
-  'base',
-  'md',
-  'lg',
-  'xl',
-  '2xl'
-] as const;
 
 export const ShineDirections = [ 
   'top',
@@ -52,23 +44,32 @@ export const ShineDirections = [
   'bottom-right'
 ] as const;
 
+export const ShineSizes = [
+  'sm',
+  'base',
+  'md',
+  'lg',
+  'xl'
+] as const;
+
+export const ShineIntensities = [
+  "soft",
+  "base",
+  "strong",
+  "hard"
+] as const;
+
+
 // Derived types from the constant arrays above. Used in parsing and type-checking below.
 export type shineDirection = typeof ShineDirections[number];
 export type shineSize = typeof ShineSizes[number];
+export type shineIntensity = typeof ShineIntensities[number];
 
 // string = ColorOption | 'custom-color'
-export type shineType = `${shineDirection}-${shineSize}-${string}` | `${shineDirection}-${shineSize}`;
+export type shineType = `${shineDirection}-${shineSize}-${string}-${string}` | `${shineDirection}-${shineSize}`;
 
 export const ShinePresets: Record<string, string> = (() => {
-  const sizeMultipliers: Record<shineSize, number> = {
-    sm: 1,
-    base: 1.5,
-    md: 2.25,
-    lg: 3.75,
-    xl: 6,
-    "2xl": 8,
-  };
-
+  
   // Define base offset directions (X, Y)
   const directionOffsets: Record<shineDirection, [number, number]> = {
     top: [0, 1],
@@ -81,103 +82,129 @@ export const ShinePresets: Record<string, string> = (() => {
     "bottom-right": [-1, -1],
   };
 
-  const generateLayer = (x: number, y: number, scale: number) => {
-    const offset = Math.pow(scale, 0.9);
-    const blur = Math.pow(scale, 1.3);
+  // Define size profiles multipliers for scaling offsets and blurs
+  const sizeProfiles: Record<shineSize, { offset: number; blur: number }> = {
+    sm:   { offset: 1, blur: 1 },
+    base: { offset: 2.25, blur: 1.4 },
+    md:   { offset: 3.75, blur: 1.8 },
+    lg:   { offset: 6, blur: 2.2 },
+    xl:   { offset: 8, blur: 2.8 },
+  };
+
+  const intensityProfiles: Record<shineIntensity, { opacity: number; spread: number; contrast: number }> = {
+    soft:   { opacity: 0.5, spread: 1.2, contrast: 0.8 },
+    base:   { opacity: 1.0, spread: 1.0, contrast: 1.0 },
+    strong: { opacity: 1.3, spread: 0.9, contrast: 1.1 },
+    hard:   { opacity: 1.6, spread: 0.8, contrast: 1.3 },
+  };
+
+  const generateLayer = (
+    x: number,
+    y: number,
+    size: { offset: number; blur: number },
+    intensity: { opacity: number; spread: number; contrast: number }
+  ) => {
+    const o = size.offset * intensity.spread;
+    const b = size.blur * intensity.spread;
+    const a = intensity.opacity;
+    const c = intensity.contrast;
   
     return [
-      `inset ${x * offset * 2}px ${y * offset * 2}px ${blur * 2}px -${scale * 1}px rgba(var(--highlight), 0.2)`,
-      `inset ${x * offset * 1.5}px ${y * offset * 1.5}px ${blur * 1.5}px -${scale * 1}px rgba(var(--highlight), 0.1)`,
-      `inset ${x * offset * 0.25}px ${y * offset * 0.25}px ${blur * 0.5}px -${scale * 0.25}px rgba(var(--highlight), 0.15)`,
-      `inset ${x * offset * 0.25}px ${y * offset * 0.25}px ${blur * 0.25}px rgba(var(--highlight), 0.08)`,
-      `inset 0 0 ${blur * 0.25}px ${scale * 0.25}px rgba(var(--highlight), 0.03)`
-    ].join(', ');
+      `inset ${x * 2 * o}px ${y * 2 * o}px ${2 * b}px -${1 * o}px rgba(var(--highlight), ${0.2 * a * c})`,
+      `inset ${x * 1.5 * o}px ${y * 1.5 * o}px ${1.5 * b}px -${1 * o}px rgba(var(--highlight), ${0.1 * a})`,
+      `inset ${x * 0.25 * o}px ${y * 0.25 * o}px ${0.5 * b}px -${0.25 * o}px rgba(var(--highlight), ${0.15 * a / c})`,
+      `inset ${x * 0.25 * o}px ${y * 0.25 * o}px ${0.25 * b}px rgba(var(--highlight), ${0.08 * a / c})`,
+      `inset 0 0 ${0.25 * b}px ${0.25 * o}px rgba(var(--highlight), ${0.03 * a / c})`
+    ].join(", ");
   };
 
   const result: Record<string, string> = {};
-  const sizeEntries = Object.entries(sizeMultipliers);
-  const dirEntries = Object.entries(directionOffsets);
 
-  for (let i = 0; i < sizeEntries.length; i++) {
-    const [size, multiplier] = sizeEntries[i];
-    for (let j = 0; j < dirEntries.length; j++) {
-      const [dir, [x, y]] = dirEntries[j];
-      result[`${dir}-${size}`] = generateLayer(x, y, multiplier).trim();
+  for (const [sizeKey, sizeVal] of Object.entries(sizeProfiles)) {
+    for (const [intensityKey, intensityVal] of Object.entries(intensityProfiles)) {
+      for (const [dir, [x, y]] of Object.entries(directionOffsets)) {
+        const key = `${dir}-${sizeKey}-${intensityKey}`;
+        result[key] = generateLayer(x, y, sizeVal, intensityVal);
+      }
     }
   }
+  return result; //fallback
 
-  return result;
 })();
 
 // Helper function to parse shineType into its components (direction, size, and color)
 function parseShine(shine: shineType) {
-    const normalized = shine.trim();
+  const normalized = shine.trim();
 
-    // match longest valid direction prefix (top-left before top, etc.)
-    const sortedDirections = [...ShineDirections].sort((a, b) => b.length - a.length);
-    const direction = sortedDirections.find(dir => normalized.startsWith(dir + "-")) as shineDirection;
+  // Match longest valid direction prefix
+  const sortedDirections = [...ShineDirections].sort((a, b) => b.length - a.length);
+  
+  const direction = sortedDirections.find(dir => {
+    if (normalized === dir) return true;
+    if (!normalized.startsWith(dir)) return false;
+    return normalized.charAt(dir.length) === '-';
+  }) as shineDirection;
 
-    if (!direction) {
-      return { direction: "top-left" as shineDirection, size: "base" as shineSize, color: "neutral" };
-    }
+  if (!direction) {
+    return {
+      direction: "top-left" as shineDirection,
+      size: "base" as shineSize,
+      intensity: "base" as shineIntensity,
+      color: "neutral"
+    };
+  }
 
-    // remove direction and split the rest
-    const remaining = normalized.slice(direction.length + 1);
-    const parts = remaining.split("-");
+  // Remove direction and split the remaining string
+  const remaining = normalized.slice(direction.length + 1);
+  const parts = remaining.split("-");
 
-    // extract size
-    const size = parts.find(p => ShineSizes.includes(p as any)) as shineSize;
-    const sizeIndex = size ? parts.indexOf(size) : -1;
+  // Extract size and intensity if present
+  const size = parts.find(p => ShineSizes.includes(p as any)) as shineSize | undefined;
+  const intensity = parts.find(p => ShineIntensities.includes(p as any)) as shineIntensity | undefined;
 
-    // color after size
-    let colorPart: string | undefined;
-    if (sizeIndex !== -1 && parts.length > sizeIndex + 1) {
-      colorPart = parts.slice(sizeIndex + 1).join("-").trim();
-    }
+  // Determine parsing order
+  const sizeIndex = size ? parts.indexOf(size) : -1;
+  const intensityIndex = intensity ? parts.indexOf(intensity) : -1;
+  const lastKnownIndex = Math.max(sizeIndex, intensityIndex);
 
-    // no color provided → default
-    if (!colorPart) {
-      return { direction, size, color: "neutral" };
-    }
+  // Extract color (anything after size or intensity)
+  let colorPart: string | undefined;
+  if (lastKnownIndex !== -1 && parts.length > lastKnownIndex + 1) {
+    colorPart = parts.slice(lastKnownIndex + 1).join("-").trim();
+  }
 
-    // Is a valid ColorOption?
-    const isPresetColor = colorPart in ColorPresets;
+  // Validate color
+  const isPresetColor = colorPart && colorPart in ColorPresets;
+  const isCustomRGB = /^(\d{1,3}\s+){2}\d{1,3}$/.test(colorPart ?? "");
+  const color = colorPart && (colorPart === "neutral" || isPresetColor || isCustomRGB)
+    ? colorPart
+    : "neutral";
 
-    // Is a custom numeric RGB triplet (e.g. "24 124 19")?
-    const isCustomRGB = /^(\d{1,3}\s+){2}\d{1,3}$/.test(colorPart);
-
-    const color =
-      colorPart === "neutral" || isPresetColor || isCustomRGB
-        ? colorPart
-        : "neutral"; // fallback
-
-    return { direction, size, color };
+  return {
+    direction,
+    size: size ?? "base",
+    intensity: intensity ?? "base",
+    color
+  };
 }
 
-
 export function getShineStyle(shine: string, theme: "light" | "dark" = "light"): string {
-  
-  // Parse the shine string to get direction, size, and color
-  const { direction, size, color } = parseShine(shine as shineType);
-  // console.log(direction, size, color);
+  const { direction, size, intensity, color } = parseShine(shine as shineType);
 
-  // Get the corresponding shine style from presets, default to empty string if not found
-  const presetKey = `${direction}-${size}`;
+  const presetKey = `${direction}-${size}-${intensity}`;
   let shineStyle = ShinePresets[presetKey] || "";
 
-  // If the color exists in presets, get its HSL string, else use the raw color
   const colorValue = color in ColorPresets
     ? getColorStyle(color as ColorOption, theme)
     : color;
 
-    shineStyle = shineStyle
-    .replace(/\s*\n\s*/g, ' ')  // remove line breaks
-    .replace(/\s{2,}/g, ' ')    // collapse extra spaces
-    .replace(/\s*,\s*/g, ', ')  // normalize comma spacing
-    .trim();
-    
-  // console.log(shineStyle);
-  return shineStyle.replace(/var\(--highlight\)/g, colorValue);
+  // Normalize spaces/newlines and insert color
+  shineStyle = shineStyle
+    .replace(/\s*\n\s*/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .replace(/var\(--highlight\)/g, colorValue);
+
+  return shineStyle;
 }
 
 export type ShineOption = shineType | (string & {});

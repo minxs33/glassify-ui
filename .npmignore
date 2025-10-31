@@ -1,0 +1,8 @@
+# Ignore development-only stuff
+src/
+tsup.config.ts
+yalc.lock
+yalc/
+pnpm-lock.yaml
+*.test.*
+*.log

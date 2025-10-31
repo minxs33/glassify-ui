@@ -1,14 +1,16 @@
 {
-  "name": "glassify-ui",
-  "version": "1.0.0",
+  "name": "@minxs33/glassify-ui",
+  "version": "1.0.1",
+  "description": "A React component library for creating glassmorphism UI effects.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
     "src",
-    "src/util/",
-    "src/component/"
+    "src/util",
+    "src/component",
+    "src/effects"
   ],
   "exports": {
     ".": {
@@ -22,12 +24,20 @@
     "react-dom": "^17 || ^18 || ^19"
   },
   "scripts": {
+    "dev": "tsup --watch",
     "build": "tsup",
-    "dev": "tsup src/index.ts --watch --dts --onSuccess \"pnpm yalc-push\"",
-    "yalc-push": "npx yalc push --changed"
+    "release:patch": "pnpm build && npm version patch && npm publish --access public"
   },
+  "keywords": [
+    "react",
+    "component-library",
+    "glassmorphism",
+    "ui-components",
+    "typescript"
+  ],
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^24.9.2",
     "@types/react": "^19.1.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

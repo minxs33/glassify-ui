@@ -135,12 +135,14 @@ export const getEffectPresetStyle = (
     ) as EffectPresetConfig;
     
     // Return the styles generated from the merged configuration
+    // Use !== undefined to allow falsy values like 0 to be valid for tsup bundler tree shaking
     return {
-        blur: filteredMerged.blur ? getBlurStyle(filteredMerged.blur) : undefined,
-        tint: filteredMerged.tint ? getTintStyle(filteredMerged.tint, theme) : undefined,
-        turbulence: filteredMerged.turbulence ? getTurbulenceStyle(filteredMerged.turbulence, theme) : undefined,
-        displacement: filteredMerged.displacement ? getDisplacementStyle(filteredMerged.displacement) : undefined
-    };
+        blur: filteredMerged.blur !== undefined ? getBlurStyle(filteredMerged.blur) : undefined,
+        tint: filteredMerged.tint !== undefined ? getTintStyle(filteredMerged.tint, theme) : undefined,
+        turbulence: filteredMerged.turbulence !== undefined ? getTurbulenceStyle(filteredMerged.turbulence, theme) : undefined,
+        displacement: filteredMerged.displacement !== undefined ? getDisplacementStyle(filteredMerged.displacement) : undefined,
+      };
+      
 };
   
 export type EffectPresetOption = EffectPresetType | {

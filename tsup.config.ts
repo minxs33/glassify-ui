@@ -38,6 +38,9 @@ export default defineConfig((options) => {
     esbuildOptions(options) {
       options.jsx = "automatic";
       options.jsxImportSource = "react";
+      options.loader = {
+        '.svg': 'text'
+      };
     },
     external: ["react", "react-dom"],
     tsconfig: "tsconfig.build.json",

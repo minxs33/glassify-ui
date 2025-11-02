@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect, CSSProperties } from 'react'
 import { 
   parseZIndex,
@@ -178,8 +179,8 @@ export const Glassify: React.FC<GlassifyProps> = ({
   const turbulenceValue = effectPresetStyles.turbulence ?? { numOctaves: 1, baseFreq: 0.1 };
   const displacementValue = effectPresetStyles.displacement ?? '0';
 
-  console.log("Glassify.tsx shineProp: "+shine);
-  console.log("Glassify.tsx shine: "+shineValue);
+  // console.log("Glassify.tsx shineProp: "+shine);
+  // console.log("Glassify.tsx shine: "+shineValue);
   // const glowValue = getGlowValue(glow ?? 'none');
   
   // Function to get styles with specific values
@@ -247,7 +248,13 @@ export const Glassify: React.FC<GlassifyProps> = ({
   
   // Get them styles for the divs
   const styles = getStyles(colorValue, tintValue, borderRadiusValue, blurValue, shineValue, seed)
-  
+
+  // Encode SVG for feImage usage
+  const encodedSVG = encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="10%" height="200%">
+      <rect width="100%" height="100%" fill="url(#grad-${seed})" />
+    </svg>
+  `).replace(/'/g, "%27").replace(/"/g, "%22");
   return (
     <>
       <svg style={{ display: 'none' }}>
@@ -271,12 +278,10 @@ export const Glassify: React.FC<GlassifyProps> = ({
           />
 
           {/* Radial highlight on edges */}
+
           <feImage
-            xlinkHref={`data:image/svg+xml;utf8,${encodeURIComponent(`
-              <svg xmlns='http://www.w3.org/2000/svg' width='10%' height='200%'>
-                <rect width='100%' height='100%' fill='url(%23grad-${seed})' />
-              </svg>
-            `)}`}
+            // xlinkHref={`data:image/svg+xml;utf8,${encodedSVG}`}
+            xlinkHref={`data:image/svg+xml,${encodedSVG}`}
             result="edgeHighlight"
             x="0" y="0"
             width="100%" height="100%"

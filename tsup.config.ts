@@ -16,7 +16,7 @@ export default defineConfig((options) => {
     const pkg = JSON.parse(fs.readFileSync("./package.json", "utf-8"));
     const newFiles = isWatch
       ? ["dist", "src", "src/util", "src/component", "src/effects"]
-      : ["dist"];
+      : ["dist", "README.md", "CHANGELOG.md"];
     pkg.files = newFiles;
     fs.writeFileSync("./package.json", JSON.stringify(pkg, null, 2));
     console.log(`📦 Updated package.json files → [${newFiles.join(", ")}]`);

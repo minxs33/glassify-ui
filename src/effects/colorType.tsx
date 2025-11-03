@@ -20,7 +20,9 @@ export type ColorType =
   | 'gray'
   | 'zinc'
   | 'neutral'
-  | 'stone';
+  | 'stone'
+  | 'white'
+  | 'black';
 
 export const ColorPresets: Record<ColorType, { light: string; dark: string }> = {
   'red': {
@@ -111,7 +113,14 @@ export const ColorPresets: Record<ColorType, { light: string; dark: string }> = 
     light: '86, 93, 97',
     dark: '29, 31, 33',
   },
-  
+  'white': {
+    light: '255, 255, 255',
+    dark: '240, 240, 255',
+  },
+  'black': {
+    light: '40, 40, 60',
+    dark: '0, 0, 0',
+  },
 };
 
 export const getColorStyle = (

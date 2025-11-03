@@ -6,7 +6,11 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src",
+    "src/util",
+    "src/component",
+    "src/effects"
   ],
   "exports": {
     ".": {

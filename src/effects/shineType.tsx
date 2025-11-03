@@ -150,7 +150,7 @@ function parseShine(shine: shineType) {
       direction: "top-left" as shineDirection,
       size: "base" as shineSize,
       intensity: "base" as shineIntensity,
-      color: "neutral"
+      color: "white"
     };
   }
 
@@ -176,9 +176,9 @@ function parseShine(shine: shineType) {
   // Validate color
   const isPresetColor = colorPart && colorPart in ColorPresets;
   const isCustomRGB = /^(\d{1,3}\s+){2}\d{1,3}$/.test(colorPart ?? "");
-  const color = colorPart && (colorPart === "neutral" || isPresetColor || isCustomRGB)
+  const color = colorPart && (colorPart === "white" || isPresetColor || isCustomRGB)
     ? colorPart
-    : "neutral";
+    : "white";
 
   return {
     direction,

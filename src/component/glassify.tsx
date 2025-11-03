@@ -34,7 +34,7 @@ interface GlassifyProps {
   className?: string
   contentClassName?: string
   zIndex?: string
-  color?: ColorOption
+  // color?: ColorOption
   borderRadius?: BorderRadiusOption
   tint?: TintOption
   blur?: BlurOption
@@ -51,7 +51,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
   className, 
   contentClassName,
   zIndex,
-  color:colorProps,
+  // color:colorProps,
   tint:tintProps, 
   borderRadius,
   blur,
@@ -168,9 +168,9 @@ export const Glassify: React.FC<GlassifyProps> = ({
 
   // value initialization
   const zIndexValue = getZIndex(zIndex, className);
-  const colorValue = getColorValue(colorProps ?? "Default", currentTheme);
+  // const colorValue = getColorValue(colorProps ?? "Default", currentTheme);
   const borderRadiusValue = getBorderRadiusValue(borderRadius ?? 'none');
-  const shineValue = getShineValue(shine ?? 'bottom-right-sm-neutral', currentTheme);
+  const shineValue = getShineValue(shine ?? 'top-left-xl-white-soft', currentTheme);
   
   const effectPresetStyles = getEffectPresetValue(blur, tintProps, turbulence, displacement);
 
@@ -184,7 +184,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
   // const glowValue = getGlowValue(glow ?? 'none');
   
   // Function to get styles with specific values
-  const getStyles = (color: string, tint: string, borderRadius: string, blur: string, shine: string, seed: number) => {
+  const getStyles = (tint: string, borderRadius: string, blur: string, shine: string, seed: number) => {
     // console.log({color, tint, borderRadius, blur, shine});
     return {
       wrapper: {
@@ -247,7 +247,8 @@ export const Glassify: React.FC<GlassifyProps> = ({
   };
   
   // Get them styles for the divs
-  const styles = getStyles(colorValue, tintValue, borderRadiusValue, blurValue, shineValue, seed)
+  // const styles = getStyles(colorValue, tintValue, borderRadiusValue, blurValue, shineValue, seed)
+  const styles = getStyles(tintValue, borderRadiusValue, blurValue, shineValue, seed)
 
   // Encode SVG for feImage usage
   const encodedSVG = encodeURIComponent(`

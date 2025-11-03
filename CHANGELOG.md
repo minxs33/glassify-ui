@@ -17,3 +17,10 @@
 ### Fixed
 - Added `use client` compatibility flag
 - Improved SSR handling and encoding normalization for inline SVG filters
+
+## [1.0.3] - 2025-11-04
+### Fixed
+- Added README.md and CHANGELOG.md
+- Fixing shine custom rgb normalizer
+- Removing Color props for future plan
+- Fixing <Glassify> default values

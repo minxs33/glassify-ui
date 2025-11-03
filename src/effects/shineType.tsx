@@ -175,9 +175,16 @@ function parseShine(shine: shineType) {
 
   // Validate color
   const isPresetColor = colorPart && colorPart in ColorPresets;
-  const isCustomRGB = /^(\d{1,3}\s+){2}\d{1,3}$/.test(colorPart ?? "");
-  const color = colorPart && (colorPart === "white" || isPresetColor || isCustomRGB)
-    ? colorPart
+  const isCustomRGB = /^(\d{1,3}([-,\s])){2}\d{1,3}$/.test(colorPart ?? "");
+
+  // Normalize custom RGB (replace any dash or comma with space)
+  const normalizedColor = isCustomRGB
+  ? colorPart!.replace(/[-,]/g, " ").trim()
+  : colorPart;
+
+  const color = normalizedColor 
+    && (normalizedColor === "white" || normalizedColor in ColorPresets || isCustomRGB)
+    ? normalizedColor
     : "white";
 
   return {

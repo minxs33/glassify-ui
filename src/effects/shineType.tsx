@@ -109,13 +109,21 @@ export const ShinePresets: Record<string, string> = (() => {
     const a = intensity.opacity;
     const c = intensity.contrast;
   
-    return [
-      `inset ${x * 2 * o}px ${y * 2 * o}px ${2 * b}px -${1 * o}px rgba(var(--highlight), ${0.2 * a * c})`,
-      `inset ${x * 1.5 * o}px ${y * 1.5 * o}px ${1.5 * b}px -${1 * o}px rgba(var(--highlight), ${0.1 * a})`,
-      `inset ${x * 0.25 * o}px ${y * 0.25 * o}px ${0.5 * b}px -${0.25 * o}px rgba(var(--highlight), ${0.15 * a / c})`,
-      `inset ${x * 0.25 * o}px ${y * 0.25 * o}px ${0.25 * b}px rgba(var(--highlight), ${0.08 * a / c})`,
+    // Main light-facing shine (bright)
+    const shine = [
+      `inset ${x * 2.5 * o}px ${y * 2.5 * o}px ${2.5 * b}px -${1 * o}px rgba(var(--highlight), ${0.18 * a * c})`,
+      `inset ${x * 1.25 * o}px ${y * 1.25 * o}px ${1.25 * b}px -${0.5 * o}px rgba(var(--highlight), ${0.1 * a})`,
+      `inset ${x * 0.4 * o}px ${y * 0.4 * o}px ${0.8 * b}px rgba(var(--highlight), ${0.08 * a / c})`,
       `inset 0 0 ${0.25 * b}px ${0.25 * o}px rgba(var(--highlight), ${0.03 * a / c})`
-    ].join(", ");
+    ];
+  
+    // Subtle backside (dark falloff / reflection)
+    const shadow = [
+      `inset ${-x * 0.6 * o}px ${-y * 0.6 * o}px ${0.9 * b}px ${0.15 * o}px rgba(var(--highlight), ${0.035 * a / c})`,
+      `inset ${-x * 0.3 * o}px ${-y * 0.3 * o}px ${0.5 * b}px ${0.1 * o}px rgba(var(--highlight), ${0.02 * a / c})`
+    ];
+  
+    return [...shine, ...shadow].join(", ");
   };
 
   const result: Record<string, string> = {};

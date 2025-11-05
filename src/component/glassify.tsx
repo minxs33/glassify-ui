@@ -76,19 +76,19 @@ export const Glassify: React.FC<GlassifyProps> = ({
   const currentTheme = theme || 'light';
 
   // Defining functions to get all the values of the props
-  const getColorValue = (
-    colorOption: ColorOption,
-    theme: 'light' | 'dark',
-  ):string => {
-    const resolved = resolveThemedValue(colorOption, theme); // Resolve the themed value (e.g., "red dark:blue" -> "red" or "blue")
+  // const getColorValue = (
+  //   colorOption: ColorOption,
+  //   theme: 'light' | 'dark',
+  // ):string => {
+  //   const resolved = resolveThemedValue(colorOption, theme); // Resolve the themed value (e.g., "red dark:blue" -> "red" or "blue")
 
-    if (!resolved) return getColorStyle('Default', theme); // Fallback to 'Default' if no color is provided
-    // if (typeof resolved === 'string' && !Object.keys(ColorPresets).includes(resolved)) {
-    //   return rgbComma(resolved);
-    // }
-    // Future proofing for custom colors
-    return getColorStyle(resolved as ColorType, theme);
-  }
+  //   if (!resolved) return getColorStyle('Default', theme); // Fallback to 'Default' if no color is provided
+  //   // if (typeof resolved === 'string' && !Object.keys(ColorPresets).includes(resolved)) {
+  //   //   return rgbComma(resolved);
+  //   // }
+  //   // Future proofing for custom colors
+  //   return getColorStyle(resolved as ColorType, theme);
+  // }
 
   const getBorderRadiusValue = (borderRadius: BorderRadiusOption): string => {
     if (typeof borderRadius === 'string'){
@@ -120,7 +120,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
   ): EffectStyles =>{
 
       const resolvedTint = tintProps ? resolveThemedValue(tintProps, currentTheme) : undefined;
-      const resolvedTurbulence = turbulence ? resolveThemedValue(turbulence, currentTheme) : undefined;
+      const resolvedTurbulence = typeof turbulence === 'string' ? resolveThemedValue(turbulence, currentTheme) : turbulence;
       
       return getEffectPresetStyle(
       effectPreset ?? 'none',
@@ -221,6 +221,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
         zIndex: zIndexValue + 2,
         transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2)',
         borderRadius: borderRadius,
+        backgroundBlendMode: 'overlay',
         boxShadow: shine,
       } as CSSProperties,
 

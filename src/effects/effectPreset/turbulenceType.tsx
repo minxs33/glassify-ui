@@ -55,41 +55,43 @@ export const TurbulencePresets: Record<TurbulenceType, TurbulenceThemeConfig> = 
   },
 };
 
+// Type guard to check if a value is a TurbulenceConfig
+function isTurbulenceConfig(value: unknown): value is Partial<TurbulenceConfig> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    (
+      'baseFreq' in value ||
+      'numOctaves' in value
+    )
+  );
+}
+
 export const getTurbulenceStyle = (
   turbulence: TurbulenceType | string | Partial<TurbulenceConfig>,
   theme: 'light' | 'dark' = 'light'
 ): TurbulenceConfig => {
   const fallback: TurbulenceConfig = { numOctaves: 0, baseFreq: 0 };
 
-  // If it's a partial config object (custom), merge it with a base preset
-  if (typeof turbulence === 'object') {
-    // merge fallback with the provided turbulence config
-    const preset = TurbulencePresets['none']?.theme?.[theme] ??
-                   TurbulencePresets['none']?.default ??
-                   fallback;
-
-    // override the default with the user's input
+  // Custom object case
+  if (isTurbulenceConfig(turbulence)) {
+    const preset =
+    TurbulencePresets.none.theme?.[theme] ??
+      TurbulencePresets.none.default ??
+      fallback;
+    
     return {
       ...preset,
-      ...turbulence
+      ...turbulence,
     };
   }
 
-  // If it's not a valid preset, return fallback
-  if (!(turbulence in TurbulencePresets)) {
-    return fallback;
-  }
-
   const preset = TurbulencePresets[turbulence as TurbulenceType];
-
-  return (
-    preset.theme?.[theme] ??
-    preset.default ??
-    fallback
-  );
+  console.log("[Glassify UI] Info: Using turbulence preset:", preset);
+  return preset.theme?.[theme] ?? preset.default ?? fallback;
 };
 
 // Combined type for all turbulence options
 // export type TurbulenceOption = TurbulenceType | Partial<TurbulenceConfig> | (string & {});
-export type TurbulenceOption = TurbulenceType | (string & {});
+export type TurbulenceOption = TurbulenceType | (string & {}) | Partial<TurbulenceConfig>;
   

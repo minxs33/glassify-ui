@@ -20,7 +20,17 @@
 
 ## [1.0.3] - 2025-11-04
 ### Fixed
-- Added README.md and CHANGELOG.md
 - Fixing shine custom rgb normalizer
 - Removing Color props for future plan
 - Fixing <Glassify> default values
+
+### Added
+- Added README.md and CHANGELOG.md
+
+## [1.0.4] - 2025-11-07
+### Updated
+- Adjusted default values for `turbulence`, `effectPresets`, and the `Glassify` component for better visual consistency.
+
+### Fixed
+- Improved `shine` layer generation to include proper backdrop rendering.
+- Fixed issue with custom `turbulence` input not applying correctly.

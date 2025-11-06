@@ -27,7 +27,11 @@ import {
   getEffectPresetStyle,
   GlowOption,
   EffectStyles,
+  getTurbulenceStyle,
+  getDisplacementStyle,
+  getBlurStyle,
 } from '../effects';
+import { get } from 'http';
 
 interface GlassifyProps {
   children?: React.ReactNode
@@ -120,7 +124,8 @@ export const Glassify: React.FC<GlassifyProps> = ({
   ): EffectStyles =>{
 
       const resolvedTint = tintProps ? resolveThemedValue(tintProps, currentTheme) : undefined;
-      const resolvedTurbulence = typeof turbulence === 'string' ? resolveThemedValue(turbulence, currentTheme) : turbulence;
+      const resolvedTurbulence = typeof turbulence === 'string' ? resolveThemedValue(turbulence, currentTheme) : turbulence ?? 'none';
+      // console.log("resolved turbulence value ", resolvedTurbulence);
       
       return getEffectPresetStyle(
       effectPreset ?? 'none',
@@ -170,14 +175,14 @@ export const Glassify: React.FC<GlassifyProps> = ({
   const zIndexValue = getZIndex(zIndex, className);
   // const colorValue = getColorValue(colorProps ?? "Default", currentTheme);
   const borderRadiusValue = getBorderRadiusValue(borderRadius ?? 'none');
-  const shineValue = getShineValue(shine ?? 'top-left-xl-white-soft', currentTheme);
+  const shineValue = getShineValue(shine ?? 'top-left-base-base', currentTheme);
   
   const effectPresetStyles = getEffectPresetValue(blur, tintProps, turbulence, displacement);
 
   const tintValue = effectPresetStyles.tint ?? 'rgba(255, 255, 255, 0.1)';
-  const blurValue = effectPresetStyles.blur ?? '8px';
-  const turbulenceValue = effectPresetStyles.turbulence ?? { numOctaves: 1, baseFreq: 0.1 };
-  const displacementValue = effectPresetStyles.displacement ?? '0';
+  const blurValue = effectPresetStyles.blur ?? getBlurStyle('base');
+  const turbulenceValue = effectPresetStyles.turbulence ?? getTurbulenceStyle('none', currentTheme);
+  const displacementValue = effectPresetStyles.displacement ?? getDisplacementStyle('none');
 
   // console.log("Glassify.tsx shineProp: "+shine);
   // console.log("Glassify.tsx shine: "+shineValue);

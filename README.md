@@ -14,9 +14,11 @@ pnpm add @minxs33/glassify-ui
 ```
 
 ## Usage
+
 The core functionality is provided by the `Glassify` component.
 
 ### Basic Example
+
 Wrap any content with the `Glassify` component and use its `props` to control the look and feel of the glass effect.
 ```tsx
 import { Glassify } from "@minxs33/glassify-ui";
@@ -32,10 +34,12 @@ export default function Example() {
       displacement='base'
     >  
       {/* ... content ... */}
-    </Glassify>  );  
+    </Glassify>  
+  );  
 }
 ```
 ### Using an Effect Preset
+
 Use the `effectPreset` prop to apply a predefined combination of `blur`, `tint`, `turbulence`, and `displacement`.
 ```tsx
 import { Glassify } from '@minxs33/glassify-ui';
@@ -53,6 +57,7 @@ function PresetExample() {
 ```
 
 ### Effect Presets List
+
 | Preset       | Description |
 |---------------|-------------|
 | `frosted`    | Light and diffused, like softened daylight on cool glass. |
@@ -68,6 +73,7 @@ function PresetExample() {
 | `monochrome` | Neutral and minimal, focused purely on light and form. |
 
 ## Customizing Effects
+
 You can override or set individual effects by using their respective props.
 ```tsx
 import { Glassify } from '@minxs33/glassify-ui';
@@ -83,15 +89,15 @@ function CustomExample() {
       tint="blue"
       // Custom shine effect (direction-size-intensity)
       shine="bottom-md-strong"
-      // Override the preset's blur
-      blur="xl"
     >
       {/* ... content ... */}
     </Glassify>
   );
 }
 ```
+
 ## Props Reference
+
 | Prop | Type | Default | Description |
 |------|------|----------|-------------|
 | `children` | `React.ReactNode` | — | Content inside the glass container |
@@ -101,9 +107,9 @@ function CustomExample() {
 | `borderRadius` | `BorderRadiusOption` | `"none"` | Accepts Tailwind-style presets (`sm`, `lg`, `full`) or custom CSS values like `"12px"` or `"50%"` |
 | `tint` | `TintOption` | `"none"` | Supports presets (`frosted`, `smoke`, any color name) or custom RGBA string such as `"255,255,255,0.15"` |
 | `blur` | `BlurOption` | `"base"` | Accepts presets (`sm`, `md`, `xl`) or custom blur size like `"8px"` or `"12px"` |
-| `shine` | `ShineOption` | `"bottom-right-sm-neutral"` | Multi-part string defining direction, size, intensity, and color (e.g. `"top-left-lg-soft-blue"`) |
-| `turbulence` | `TurbulenceOption` | `"base"` | Use a preset (`sm`, `md`, `lg`) or a custom object `{ numOctaves: number, baseFreq: number }` |
-| `displacement` | `DisplacementOption` | `"base"` | Accepts presets (`sm`, `md`, `lg`) or custom numeric string (`"45"`, `"100"`) |
+| `shine` | `ShineOption` | `"top-left-base-base"` | Multi-part string defining direction, size, intensity, and color (e.g. `"top-left-lg-soft-blue"`) |
+| `turbulence` | `TurbulenceOption` | `"none"` | Use a preset (`sm`, `md`, `lg`) or a custom object `{ numOctaves: number, baseFreq: number }` |
+| `displacement` | `DisplacementOption` | `"none"` | Accepts presets (`sm`, `md`, `lg`) or custom numeric string (`"45"`, `"100"`) |
 | `effectPreset` | `EffectPresetOption` | `"none"` | Apply built-in presets (`frosted`, `crystal`, etc.) or provide an override object `{ preset, overrides }` |
 | `theme` | `"light" \| "dark"` | `"light"` | Determines color theme; can be forced manually |
 
@@ -111,8 +117,8 @@ function CustomExample() {
 
 This section lists the possible values and accepted formats for customizable props.
 
----
 ### `borderRadius`
+
 Controls the corner rounding of the glass container.
 
 **Formats:**
@@ -124,7 +130,9 @@ Controls the corner rounding of the glass container.
 <Glassify borderRadius="xl" />
 <Glassify borderRadius="16px" />
 ```
+
 ### `tint`
+
 Applies a semi-transparent overlay to the glass surface.
 
 **Formats:**
@@ -137,7 +145,9 @@ Applies a semi-transparent overlay to the glass surface.
 <Glassify tint="sky" />
 <Glassify tint="255,255,255,0.15" />
 ```
+
 ### `blur`
+
 Defines the blur intensity of the background layer.
 
 **Formats:**
@@ -149,7 +159,9 @@ Defines the blur intensity of the background layer.
 <Glassify blur="lg" />
 <Glassify blur="10px" />
 ```
+
 ### `shine`
+
 Adds directional highlights to the glass edges.
 
 **Formats:**
@@ -170,7 +182,9 @@ Here's the list for each possible segment value:
 <Glassify shine="bottom-right-md-strong-blue" />
 <Glassify shine="top-left-md-soft-152,22,118/>
 ```
+
 ### `turbulence`
+
 Controls the distortion of the background texture generated from noise.
 
 **Formats:**
@@ -182,7 +196,9 @@ Controls the distortion of the background texture generated from noise.
 <Glassify turbulence="md" />
 <Glassify turbulence={{ baseFreq: 0.03, numOctaves: 2 }} />
 ```
+
 ### `displacement`
+
 Defines the displacement mapping strength for `turbulence` effects.
 
 **Formats:**
@@ -194,7 +210,9 @@ Defines the displacement mapping strength for `turbulence` effects.
 <Glassify displacement="lg" />
 <Glassify displacement="60" />
 ```
+
 ### `effectPreset`
+
 Applies a curated combination of `blur`, `tint`, `turbulence`, and `displacement`.
 
 See the [Effect Presets](#effect-presets-list) section for the full list of available presets and their visual descriptions.
@@ -235,7 +253,6 @@ These props control how color behaves across light and dark modes.
 `color` defines the base tone that other color-aware props (`tint`, `shine`) can reference.  
 `theme` determines which color variant to apply when themed values are provided to the corresponding mode.
 
-
 **Formats:**
 - Preset color: `"sky"`, `"amber"`, `"slate"`, etc.  
 - Custom RGB: `"255,200,150"`  
@@ -244,7 +261,6 @@ These props control how color behaves across light and dark modes.
 - Mixed value: `"255,200,150 dark:sky"` or `"sky dark:255,200,150"`
 
 By default, the theme is **light**, so you don’t need to set `theme="light"` unless you’re manually toggling themes in your app.
-
 
 **Examples:**
 
@@ -264,7 +280,9 @@ By default, the theme is **light**, so you don’t need to set `theme="light"` u
   //theme counts as light
 />
 ```
+
 #### 3. Custom RGB with theme variants
+
 ```tsx
 <Glassify
   tint="255,200,150 dark:150,180,255"
@@ -272,7 +290,9 @@ By default, the theme is **light**, so you don’t need to set `theme="light"` u
   theme="dark"
 />
 ```
+
 #### 4. Mixing RGB and preset colors
+
 ```tsx
 <Glassify
   tint="255,200,150 dark:sky"

@@ -71,7 +71,7 @@ export const getTurbulenceStyle = (
   turbulence: TurbulenceType | string | Partial<TurbulenceConfig>,
   theme: 'light' | 'dark' = 'light'
 ): TurbulenceConfig => {
-  const fallback: TurbulenceConfig = { numOctaves: 0, baseFreq: 0 };
+  const fallback: TurbulenceConfig = { numOctaves: 1, baseFreq: 0.01 };
 
   // Custom object case
   if (isTurbulenceConfig(turbulence)) {
@@ -87,7 +87,6 @@ export const getTurbulenceStyle = (
   }
 
   const preset = TurbulencePresets[turbulence as TurbulenceType];
-  console.log("[Glassify UI] Info: Using turbulence preset:", preset);
   return preset.theme?.[theme] ?? preset.default ?? fallback;
 };
 

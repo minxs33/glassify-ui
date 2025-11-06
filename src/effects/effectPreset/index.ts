@@ -40,7 +40,7 @@ export const EffectPresets: Record<EffectPresetType, EffectPresetConfig> = {
     },
     crystal: {
         blur: 'md',
-        tint: 'slate',
+        tint: 'crystal',
         turbulence: 'base',
         displacement: 'lg'
     },
@@ -52,7 +52,7 @@ export const EffectPresets: Record<EffectPresetType, EffectPresetConfig> = {
     },
     arctic: {
         blur: 'lg',
-        tint: 'cyan',
+        tint: 'sky',
         turbulence: 'base',
         displacement: 'base'
     },
@@ -139,7 +139,7 @@ export const getEffectPresetStyle = (
     return {
         blur: filteredMerged.blur !== undefined ? getBlurStyle(filteredMerged.blur) : undefined,
         tint: filteredMerged.tint !== undefined ? getTintStyle(filteredMerged.tint, theme) : undefined,
-        turbulence: filteredMerged.turbulence !== undefined ? getTurbulenceStyle(filteredMerged.turbulence, theme) : undefined,
+        turbulence: filteredMerged.turbulence !== undefined ? getTurbulenceStyle(filteredMerged.turbulence, theme) : getTurbulenceStyle('none', theme),
         displacement: filteredMerged.displacement !== undefined ? getDisplacementStyle(filteredMerged.displacement) : undefined,
       };
       

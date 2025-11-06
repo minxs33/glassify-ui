@@ -7,8 +7,10 @@
   "types": "dist/index.d.ts",
   "files": [
     "dist",
-    "README.md",
-    "CHANGELOG.md"
+    "src",
+    "src/util",
+    "src/component",
+    "src/effects"
   ],
   "exports": {
     ".": {

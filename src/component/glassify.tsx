@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, CSSProperties } from 'react'
-import { 
+import {
   parseZIndex,
   rgbComma,
   resolveThemedValue
@@ -50,13 +50,13 @@ interface GlassifyProps {
   theme?: 'light' | 'dark'
 }
 
-export const Glassify: React.FC<GlassifyProps> = ({ 
-  children, 
-  className, 
+export const Glassify: React.FC<GlassifyProps> = ({
+  children,
+  className,
   contentClassName,
   zIndex,
   // color:colorProps,
-  tint:tintProps, 
+  tint: tintProps,
   borderRadius,
   blur,
   shine,
@@ -72,7 +72,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
   useEffect(() => {
     setSeed(Math.floor(Math.random() * 10000))
   }, [])
-  
+
   // make sure seed is set before rendering also check if this is client-side
   if (seed === null) return null
 
@@ -95,8 +95,8 @@ export const Glassify: React.FC<GlassifyProps> = ({
   // }
 
   const getBorderRadiusValue = (borderRadius: BorderRadiusOption): string => {
-    if (typeof borderRadius === 'string'){
-      if(Object.keys(BorderRadiusPresets).includes(borderRadius)) {
+    if (typeof borderRadius === 'string') {
+      if (Object.keys(BorderRadiusPresets).includes(borderRadius)) {
         return getBorderRadiusStyle(borderRadius as BorderRadiusType);
       }
 
@@ -117,22 +117,22 @@ export const Glassify: React.FC<GlassifyProps> = ({
   // Function that returns the value of types inside the EffectPresets
   const getEffectPresetValue = (
     // Same logic as getColorValue but needs to return an undefined if no value is provided so the getEffectPresetStyle can handle overrides
-    blur : BlurOption | undefined,
+    blur: BlurOption | undefined,
     tintProps: TintOption | undefined,
     turbulence: TurbulenceOption | undefined,
     displacement: DisplacementOption | undefined,
-  ): EffectStyles =>{
+  ): EffectStyles => {
 
-      const resolvedTint = tintProps ? resolveThemedValue(tintProps, currentTheme) : undefined;
-      const resolvedTurbulence = typeof turbulence === 'string' ? resolveThemedValue(turbulence, currentTheme) : turbulence ?? 'none';
-      // console.log("resolved turbulence value ", resolvedTurbulence);
-      
-      return getEffectPresetStyle(
+    const resolvedTint = tintProps ? resolveThemedValue(tintProps, currentTheme) : undefined;
+    const resolvedTurbulence = typeof turbulence === 'string' ? resolveThemedValue(turbulence, currentTheme) : turbulence ?? 'none';
+    // console.log("resolved turbulence value ", resolvedTurbulence);
+
+    return getEffectPresetStyle(
       effectPreset ?? 'none',
       currentTheme,
       {
         ...(blur !== undefined && { blur }),
-        ...(tintProps !== undefined && { tint : resolvedTint }),
+        ...(tintProps !== undefined && { tint: resolvedTint }),
         ...(turbulence !== undefined && { turbulence: resolvedTurbulence }),
         ...(displacement !== undefined && { displacement })
       }
@@ -176,7 +176,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
   // const colorValue = getColorValue(colorProps ?? "Default", currentTheme);
   const borderRadiusValue = getBorderRadiusValue(borderRadius ?? 'none');
   const shineValue = getShineValue(shine ?? 'top-left-base-base', currentTheme);
-  
+
   const effectPresetStyles = getEffectPresetValue(blur, tintProps, turbulence, displacement);
 
   const tintValue = effectPresetStyles.tint ?? 'rgba(255, 255, 255, 0.1)';
@@ -187,7 +187,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
   // console.log("Glassify.tsx shineProp: "+shine);
   // console.log("Glassify.tsx shine: "+shineValue);
   // const glowValue = getGlowValue(glow ?? 'none');
-  
+
   // Function to get styles with specific values
   const getStyles = (tint: string, borderRadius: string, blur: string, shine: string, seed: number) => {
     // console.log({color, tint, borderRadius, blur, shine});
@@ -200,7 +200,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
         borderRadius: borderRadius,
         zIndex: zIndexValue,
       } as CSSProperties,
-  
+
       effect: {
         position: 'absolute',
         zIndex: zIndexValue,
@@ -212,14 +212,14 @@ export const Glassify: React.FC<GlassifyProps> = ({
         isolation: 'isolate',
         pointerEvents: 'none',
       } as CSSProperties,
-  
+
       tint: {
-        zIndex: zIndexValue+3,
+        zIndex: zIndexValue + 3,
         position: 'absolute',
         inset: 0,
         background: `rgba(${tint})`,
       } as CSSProperties,
-  
+
       shine: {
         position: 'absolute',
         inset: 0,
@@ -245,13 +245,13 @@ export const Glassify: React.FC<GlassifyProps> = ({
         // backgroundSize: 'cover',
         // pointerEvents: 'none'
       } as CSSProperties,
-  
+
       content: {
-        zIndex: zIndexValue+3,
+        zIndex: zIndexValue + 3,
       } as CSSProperties,
     };
   };
-  
+
   // Get them styles for the divs
   // const styles = getStyles(colorValue, tintValue, borderRadiusValue, blurValue, shineValue, seed)
   const styles = getStyles(tintValue, borderRadiusValue, blurValue, shineValue, seed)
@@ -265,12 +265,12 @@ export const Glassify: React.FC<GlassifyProps> = ({
   return (
     <>
       <svg style={{ display: 'none' }}>
-        <defs>
+        {/* <defs>
           <radialGradient id={`grad-${seed}`} cx="50%" cy="50%" r="50%">
-            <stop offset="80%" stopColor="white" stopOpacity="1" />
+            <stop offset="100%" stopColor="white" stopOpacity="1" />
             <stop offset="100%" stopColor="black" stopOpacity="0" />
           </radialGradient>
-        </defs>
+        </defs> */}
         <filter
           id={`vibrancyFilter-${seed}`}
           x="0%" y="0%" width="100%" height="100%" filterUnits="objectBoundingBox"
@@ -284,15 +284,23 @@ export const Glassify: React.FC<GlassifyProps> = ({
             result="turbulence"
           />
 
+          {/* --- 2. 🔧 Add asymmetric gamma channel mapping (the missing refraction core) --- */}
+          {/* <feComponentTransfer in="turbulence" result="colorShift">  
+            <feFuncR type="gamma" amplitude="1" exponent="10" offset="0.45" />
+            <feFuncG type="gamma" amplitude="0" exponent="1" offset="0" />
+            <feFuncB type="gamma" amplitude="0" exponent="1" offset="0.5" />
+          </feComponentTransfer> */}
+
+
           {/* Radial highlight on edges */}
 
-          <feImage
+          {/* <feImage
             // xlinkHref={`data:image/svg+xml;utf8,${encodedSVG}`}
             xlinkHref={`data:image/svg+xml,${encodedSVG}`}
             result="edgeHighlight"
             x="0" y="0"
             width="100%" height="100%"
-          />
+          /> */}
 
           {/* Blend turbulence with edge gradient */}
           <feBlend in="turbulence" in2="edgeHighlight" mode="lighten" result="highlightedEdges" />
@@ -301,7 +309,7 @@ export const Glassify: React.FC<GlassifyProps> = ({
           <feGaussianBlur in="turbulence" stdDeviation="4" result="softMap" />
 
           {/* Add specular lighting */}
-          <feSpecularLighting
+          {/* <feSpecularLighting
             in="softMap"
             surfaceScale="5"
             specularConstant="1"
@@ -309,27 +317,28 @@ export const Glassify: React.FC<GlassifyProps> = ({
             lightingColor="#ffffff"
             result="specLight"
           >
-            <fePointLight x="100" y="100" z="200" />
-          </feSpecularLighting>
+            <fePointLight x="50%" y="50%" z="200" />
+          </feSpecularLighting> */}
 
           {/* Combine highlights and lighting */}
           <feBlend in="highlightedEdges" in2="specLight" mode="screen" result="litImage" />
 
+
           {/* Offset + combine to create bent map */}
-          <feOffset in="softMap" dx="5" dy="5" result="offsetMap" />
-          <feComposite
+          <feOffset in="softMap" dx="2" dy="2" result="offsetMap" />
+          {/* <feComposite
             in="softMap"
             in2="offsetMap"
             operator="arithmetic"
-            k2="0.7"
-            k3="0.3"
+            k2="0.5"
+            k3="0.5"
             result="bentMap"
-          />
+          /> */}
 
           {/* Final displacement */}
           <feDisplacementMap
             in="SourceGraphic"
-            in2="bentMap"
+            // in2="bentMap"
             scale={displacementValue}
             xChannelSelector="R"
             yChannelSelector="G"

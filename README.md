@@ -1,6 +1,8 @@
 # Glassify UI
 A sleek, lightweight React component library for effortlessly applying stunning glassmorphism UI effects to your elements.
 
+![Demo](./demo.gif)
+
 ## Getting Started
 ```bash
 # npm

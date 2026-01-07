@@ -16,7 +16,7 @@ export default defineConfig((options) => {
     const pkg = JSON.parse(fs.readFileSync("./package.json", "utf-8"));
     const newFiles = isWatch
       ? ["dist", "src", "src/util", "src/component", "src/effects"]
-      : ["dist", "README.md", "CHANGELOG.md"];
+      : ["dist", "README.md", "CHANGELOG.md", "demo.gif"];
     pkg.files = newFiles;
     fs.writeFileSync("./package.json", JSON.stringify(pkg, null, 2));
     console.log(`📦 Updated package.json files → [${newFiles.join(", ")}]`);
@@ -46,14 +46,14 @@ export default defineConfig((options) => {
     tsconfig: "tsconfig.build.json",
     onSuccess: isWatch
       ? async () => {
-          await new Promise<void>((resolve) => {
-            exec("npx yalc push --changed", (err, stdout, stderr) => {
-              if (err) console.error("❌ Yalc push failed:", stderr);
-              else console.log("📦 Yalc updated successfully:\n" + stdout);
-              resolve();
-            });
+        await new Promise<void>((resolve) => {
+          exec("npx yalc push --changed", (err, stdout, stderr) => {
+            if (err) console.error("❌ Yalc push failed:", stderr);
+            else console.log("📦 Yalc updated successfully:\n" + stdout);
+            resolve();
           });
-        }
+        });
+      }
       : undefined,
   };
 });

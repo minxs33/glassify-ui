@@ -35,6 +35,6 @@
 - Improved `shine` layer generation to include proper backdrop rendering.
 - Fixed issue with custom `turbulence` input not applying correctly.
 
-## [1.0.5] - 2026-01-08
+## [1.0.7] - 2026-01-08
 ### Added
 - Added Demo Gif into the README.

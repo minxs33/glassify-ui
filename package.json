@@ -1,6 +1,6 @@
 {
   "name": "@minxs33/glassify-ui",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A React component library for creating glassmorphism UI effects.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

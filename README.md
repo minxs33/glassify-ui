@@ -1,3 +1,5 @@
+# I ceased development of this project, so if you're interested, feel free to use it for your own purposes.
+
 # Glassify UI
 A sleek, lightweight React component library for effortlessly applying stunning glassmorphism UI effects to your elements.
 
